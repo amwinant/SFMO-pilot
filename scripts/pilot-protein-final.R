@@ -361,7 +361,11 @@ annotations %>%
     locations = cells_body()
   )
 
+<<<<<<< HEAD
 # Count data -------------------------------------------------------------------
+=======
+# Feature counts
+>>>>>>> 4db7856bfb54e97078c84aff1a6bd30ef206424a
 rna_counts <- GetAssayData(seurat_obj, slot = "counts")
 genes_per_cell <- colSums(rna_counts > 0)
 
@@ -428,6 +432,7 @@ prot <- ggplot(prot_df, aes(x = sample, y = proteins, fill = sample)) +
   )
 rna / prot
 
+<<<<<<< HEAD
 # Scoring and integration with functional data ---------------------------------
 cluster_fibers <- c(
   "c22f17", "s14_2f10", "s14_2f8", "s15_2f12", "s15_2f13",
@@ -550,8 +555,6 @@ plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_c
 
 combined_plot <- (plot_srx + plotd_drx) / (plot_t1 + plot_t2)
 combined_plot
-
-
 
 # Citations
 c("vroom", "here", "PhosR", "msigdbr", "readr", "gt", "dplyr", "Seurat", "ggplot2", "ggrepel", "tidyr", "stringr", "clusterProfiler", "org.Hs.eg.db", "scran", "scuttle", "tibble", "edgeR", "pheatmap", "fgsea", "viridis", "limma", "enrichplot") %>%
