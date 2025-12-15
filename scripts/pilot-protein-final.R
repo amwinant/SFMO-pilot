@@ -432,7 +432,7 @@ prot <- ggplot(prot_df, aes(x = sample, y = proteins, fill = sample)) +
   )
 rna / prot
 
-<<<<<<< HEAD
+
 # Scoring and integration with functional data ---------------------------------
 cluster_fibers <- c(
   "c22f17", "s14_2f10", "s14_2f8", "s15_2f12", "s15_2f13",
@@ -488,6 +488,7 @@ p_srx <- wilcox.test(meta_data_subset$srx ~ meta_data_subset$in_cluster)$p.value
 p_drx <- wilcox.test(meta_data_subset$drx ~ meta_data_subset$in_cluster)$p.value
 p_t1  <- wilcox.test(meta_data_subset$t1  ~ meta_data_subset$in_cluster)$p.value
 p_t2  <- wilcox.test(meta_data_subset$t2  ~ meta_data_subset$in_cluster)$p.value
+atp  <- wilcox.test(meta_data_subset$ATP_turnover  ~ meta_data_subset$in_cluster)$p.value
 
 plot_srx <- ggplot(meta_data_subset, aes(x = srx, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
@@ -553,8 +554,28 @@ plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_c
     title = "T2 vs Combined Score"
   )
 
-combined_plot <- (plot_srx + plotd_drx) / (plot_t1 + plot_t2)
+combined_plot <- (plot_srx + plot_drx) / (plot_t1 + plot_t2)
 combined_plot
+
+meta_data_subset$ATP_turnover <- 220 * (
+  (meta_data_subset$drx * 60) / (100 * meta_data_subset$t1) +
+    (meta_data_subset$srx * 60) / (100 * meta_data_subset$t2)
+)
+ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
+  theme_bw() +
+  geom_text(
+    aes(x = Inf, y = Inf, label = paste0("p = ", signif(atp, 3))),
+    hjust = 1.1, vjust = 1.5, inherit.aes = FALSE, size = 5
+  ) +
+  labs(
+    x = "Time (seconds)",
+    y = "Combined RNA+Protein Score",
+    color = "Cluster",
+    title = "Theoretical ATP turnover time"
+  )
 
 # Citations
 c("vroom", "here", "PhosR", "msigdbr", "readr", "gt", "dplyr", "Seurat", "ggplot2", "ggrepel", "tidyr", "stringr", "clusterProfiler", "org.Hs.eg.db", "scran", "scuttle", "tibble", "edgeR", "pheatmap", "fgsea", "viridis", "limma", "enrichplot") %>%
