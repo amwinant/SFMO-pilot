@@ -42,7 +42,6 @@ seurat_obj <- readRDS("objects/seurat_normalized.rds")
 # meta_filtered <- subset(meta_all, filter_status == "kept")
 # seurat_obj <- subset(seurat_obj, cells = meta_filtered$fiber_id)
 # sce <- as.SingleCellExperiment(seurat_obj)
-# clusters <- quickCluster(sce)
 # sce <- logNormCounts(sce)
 # seurat_obj <- SetAssayData(seurat_obj,
 #                            slot = "data",
@@ -79,11 +78,9 @@ sample_info_CS <- readRDS("objects/sample_info_CS.rds")
 # pseudo_bulk_all <- as.data.frame(pseudo_bulk_all)
 # pseudo_bulk_all <- round(pseudo_bulk_all)
 # 
-# pseudo_bulk_log_all <- log1p(pseudo_bulk_all)
 # pseudo_bulk_log_all_t <- t(pseudo_bulk_log_all)
 # pseudo_bulk_log_all_t <- pseudo_bulk_log_all_t[, apply(pseudo_bulk_log_all_t, 2, var) != 0]
-# 
-# pca_res_all <- prcomp(pseudo_bulk_log_all_t, scale.=TRUE)
+#
 # pca_df_all <- data.frame(
 #   PC1 = pca_res_all$x[,1],
 #   PC2 = pca_res_all$x[,2],

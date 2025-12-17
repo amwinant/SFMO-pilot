@@ -361,11 +361,9 @@ annotations %>%
     locations = cells_body()
   )
 
-<<<<<<< HEAD
 # Count data -------------------------------------------------------------------
-=======
+
 # Feature counts
->>>>>>> 4db7856bfb54e97078c84aff1a6bd30ef206424a
 rna_counts <- GetAssayData(seurat_obj, slot = "counts")
 genes_per_cell <- colSums(rna_counts > 0)
 
@@ -483,7 +481,7 @@ meta_data_subset$in_cluster <- factor(
 func_metrics <- c("srx","drx","t1","t2")
 meta_data_subset[, func_metrics] <- lapply(meta_data_subset[, func_metrics], as.numeric)
 meta_data_subset <- meta_data_subset[complete.cases(meta_data_subset[, func_metrics]), ]
-
+meta_data_subset$ATP_turnover <- 220 * ( (meta_data_subset$drx * 60) / (100 * meta_data_subset$t1) + (meta_data_subset$srx * 60) / (100 * meta_data_subset$t2) )
 p_srx <- wilcox.test(meta_data_subset$srx ~ meta_data_subset$in_cluster)$p.value
 p_drx <- wilcox.test(meta_data_subset$drx ~ meta_data_subset$in_cluster)$p.value
 p_t1  <- wilcox.test(meta_data_subset$t1  ~ meta_data_subset$in_cluster)$p.value
@@ -557,10 +555,6 @@ plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_c
 combined_plot <- (plot_srx + plot_drx) / (plot_t1 + plot_t2)
 combined_plot
 
-meta_data_subset$ATP_turnover <- 220 * (
-  (meta_data_subset$drx * 60) / (100 * meta_data_subset$t1) +
-    (meta_data_subset$srx * 60) / (100 * meta_data_subset$t2)
-)
 ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE, color = "black") +
