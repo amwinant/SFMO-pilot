@@ -24,6 +24,8 @@ counts_mat <- as.matrix(counts[, -(1:2)])
 rownames(counts_mat) <- counts$gene_name 
 seurat_obj <- readRDS("objects/seurat_normalized.rds")
 
+
+
 ##Seurat object creation, normalization, removal of batch effects:
 # seurat_obj <- CreateSeuratObject(counts=counts_mat, meta.data=metadata)
 # meta_all <- seurat_obj@meta.data
@@ -131,8 +133,8 @@ ggplot(volcano_df, aes(x = logFC, y = negLogFDR)) +
     max.overlaps = 20
   ) +
   labs(
-    title = "Volcano — ICU-AW vs Control",
-    x = "log2 Fold Change (ICU / C)",
+    title = "Volcano — Critical illness vs Control",
+    x = "log2 Fold Change (CI / C)",
     y = "-log10(FDR)"
   ) +
   theme_minimal()
@@ -163,7 +165,7 @@ fgsea_CS %>%
   scale_fill_viridis_c(direction = -1, option = "C") +
   theme_minimal() +
   labs(
-    title = "Top Enriched Hallmark Pathways (ICU-AW vs Control)",
+    title = "Top Enriched Hallmark Pathways (Critical illness vs Control)",
     x = "Normalized Enrichment Score (NES)",
     y = "Pathway",
     fill = "FDR"
@@ -225,7 +227,7 @@ annotation_col <- cell_meta %>%
   dplyr::rename(condition = group) %>%        
   dplyr::mutate(condition = recode(condition,    
                                    "C" = "Control",
-                                   "S" = "ICU"))
+                                   "S" = "Critical Illness"))
 rownames(annotation_col) <- colnames(logcounts_top_scaled)
 
 heat <- pheatmap(
@@ -236,7 +238,6 @@ heat <- pheatmap(
   show_rownames = TRUE,
   show_colnames = FALSE,
   scale = "row",
-  fontsize = 10,
   main = "Per-fiber expression of top 50 DE genes (lowest FDR)",
   silent = TRUE
 )
@@ -280,8 +281,8 @@ Idents(seurat_obj) <- "in_cluster"
 meta <- seurat_obj@meta.data %>%
   dplyr::mutate(
     in_cluster = factor(in_cluster, levels = c("other", "cluster")),
-    condition = recode(group, "C" = "Control", "S" = "ICU-AW") %>%
-      factor(levels = c("Control", "ICU-AW"))
+    condition = recode(group, "C" = "Control", "S" = "Critical Illness") %>%
+      factor(levels = c("Control", "Critical Illness"))
   )
 
 plot_data <- meta %>%

@@ -161,7 +161,7 @@ ggplot(DE_results, aes(x = logFC, y = -log10(adj.P.Val), color = Signif_FDR)) +
   geom_point(size = 1.5) + 
   geom_vline(xintercept = c(-1, 1), linetype = "dashed") + 
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") + scale_color_manual(values = c("grey", "red")) + 
-  labs(title = "Volcano Plot (FDR)", y = "-log10(FDR)") + 
+  labs(title = "Volcano — Critical illness vs Control", y = "-log10(FDR)") + 
   theme_minimal() 
 
 # DE cluster v other -----------------------------------------------------------
@@ -289,6 +289,7 @@ down <- ggplot(ego_down_df, aes(x = reorder(Description, Count), y = Count, fill
 
 tree_up / down
 
+tree_up
 
 # Compare sig proteins to genes ------------------------------------------------
 
@@ -371,7 +372,7 @@ rna_df <- data.frame(
   cell = names(genes_per_cell),
   genes = as.numeric(genes_per_cell),
   sample = seurat_obj$sample,
-  condition = recode(seurat_obj$group, "C" = "Control", "S" = "ICU-AW")
+  condition = recode(seurat_obj$group, "C" = "Control", "S" = "Critical illness")
 )
 
 prot_counts <- colSums(!is.na(normalized_data))
@@ -382,7 +383,7 @@ prot_df <- data.frame(
 ) %>%
   left_join(filtered_metadata, by = c("cell" = "fiber_id")) %>%  # metadata has sample/subject info
   mutate(
-    condition = recode(condition, "c" = "Control", "s" = "ICU-AW")
+    condition = recode(condition, "c" = "Control", "s" = "Critical illness")
   )
 
 prot_df$sample <- gsub("^[csCS]", "", prot_df$subject)
@@ -490,7 +491,7 @@ atp  <- wilcox.test(meta_data_subset$ATP_turnover  ~ meta_data_subset$in_cluster
 
 plot_srx <- ggplot(meta_data_subset, aes(x = srx, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_smooth(method = "lm", se = FALSE, color = "grey") +
   scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
   theme_bw() +
   geom_text(
@@ -506,7 +507,7 @@ plot_srx <- ggplot(meta_data_subset, aes(x = srx, y = Combined_Score, color = in
 
 plot_drx <- ggplot(meta_data_subset, aes(x = drx, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_smooth(method = "lm", se = FALSE, color = "grey") +
   scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
   theme_bw() +
   geom_text(
@@ -522,7 +523,7 @@ plot_drx <- ggplot(meta_data_subset, aes(x = drx, y = Combined_Score, color = in
 
 plot_t1 <- ggplot(meta_data_subset, aes(x = t1, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_smooth(method = "lm", se = FALSE, color = "grey") +
   scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
   theme_bw() +
   geom_text(
@@ -538,7 +539,7 @@ plot_t1 <- ggplot(meta_data_subset, aes(x = t1, y = Combined_Score, color = in_c
 
 plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_smooth(method = "lm", se = FALSE, color = "grey") +
   scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
   theme_bw() +
   geom_text(
@@ -552,12 +553,16 @@ plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_c
     title = "T2 vs Combined Score"
   )
 
-combined_plot <- (plot_srx + plot_drx) / (plot_t1 + plot_t2)
+combined_plot <- (plot_drx + plot_srx) / (plot_t1 + plot_t2)
 combined_plot
 
-ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
+atp <- ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_smooth(
+    aes(group = in_cluster, color = in_cluster),
+    method = "lm",
+    se = FALSE
+  ) +
   scale_color_manual(values = c("cluster"="red", "other"="gray70")) +
   theme_bw() +
   geom_text(
@@ -570,8 +575,8 @@ ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cl
     color = "Cluster",
     title = "Theoretical ATP turnover time"
   )
-
-# Citations
+ combined_plot + atp
+# Citations# Citaatptions
 c("vroom", "here", "PhosR", "msigdbr", "readr", "gt", "dplyr", "Seurat", "ggplot2", "ggrepel", "tidyr", "stringr", "clusterProfiler", "org.Hs.eg.db", "scran", "scuttle", "tibble", "edgeR", "pheatmap", "fgsea", "viridis", "limma", "enrichplot") %>%
   map(citation) %>%
   print(style = "text")
