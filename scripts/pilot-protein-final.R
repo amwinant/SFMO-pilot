@@ -578,7 +578,7 @@ plot_t2 <- ggplot(meta_data_subset, aes(x = t2, y = Combined_Score, color = in_c
 combined_plot <- (plot_drx + plot_srx) / (plot_t1 + plot_t2)
 combined_plot
 
-atp <- ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
+atp_plot <- ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color = in_cluster)) +
   geom_point(alpha = 0.7) +
   geom_smooth(
     aes(group = in_cluster, color = in_cluster),
@@ -592,12 +592,12 @@ atp <- ggplot(meta_data_subset, aes(x = ATP_turnover, y = Combined_Score, color 
     hjust = 1.1, vjust = 1.5, inherit.aes = FALSE, size = 5
   ) +
   labs(
-    x = "Time (seconds)",
+    x = "Theoretical myosin ATP consumption (a.u.)",
     y = "Combined RNA+Protein Score",
     color = "Cluster",
     title = "Theoretical ATP turnover time"
   )
- combined_plot + atp
+ combined_plot + atp_plot
 # Citations# Citaatptions
 c("vroom", "here", "PhosR", "msigdbr", "readr", "gt", "dplyr", "Seurat", "ggplot2", "ggrepel", "tidyr", "stringr", "clusterProfiler", "org.Hs.eg.db", "scran", "scuttle", "tibble", "edgeR", "pheatmap", "fgsea", "viridis", "limma", "enrichplot") %>%
   map(citation) %>%
